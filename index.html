@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SiteMinder Reseller Opportunity</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         /* --- SiteMinder Brand Colors --- */
@@ -22,7 +23,8 @@
             background-color: var(--sm-bg);
             color: var(--sm-text);
             padding: 1.5rem; 
-            line-height: 1.4; 
+            line-height: 1.4;
+            margin: 0;
         }
 
         .container-to-print {
@@ -30,6 +32,9 @@
             margin: 0 auto;
             background-color: var(--sm-bg);
             padding: 0.5rem;
+            /* Ensure content is visible */
+            display: block; 
+            opacity: 1;
         }
 
         /* --- Header --- */
@@ -118,4 +123,150 @@
             background: var(--sm-card-bg);
             padding: 1rem;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            text-align: center;
+            border: 1px solid var(--sm-border);
+            border-top: 4px solid var(--sm-dark-blue);
+        }
+
+        .card.profit { 
+            border-top-color: var(--sm-teal); 
+            background: linear-gradient(to bottom right, #ffffff, #f0fbff);
+        }
+
+        .card h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin: 0 0 0.25rem 0;
+            min-height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--sm-dark-blue);
+        }
+        
+        .card.profit .value { color: var(--sm-teal); }
+
+        .card .sub-value {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        /* --- Table Section --- */
+        .input-section {
+            background: var(--sm-card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--sm-border);
+        }
+
+        .input-section h2 {
+            color: var(--sm-dark-blue);
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+        }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+
+        th {
+            text-align: left;
+            padding: 0.75rem;
+            color: var(--sm-dark-blue);
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-bottom: 2px solid var(--sm-border);
+            background-color: #fcfdfd;
+        }
+
+        td {
+            padding: 0.75rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--sm-border);
+            font-size: 0.9rem;
+        }
+
+        /* Input Styling */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 8px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 0.4rem 0.4rem 0.4rem 1rem;
+            border: 1px solid var(--sm-border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--sm-dark-blue);
+            background: #f8fafc;
+        }
+        
+        input.qty { padding-left: 0.4rem; } 
+
+        .tier-name { font-weight: 600; color: var(--sm-dark-blue); }
+        
+        .markup-display {
+            font-weight: 700;
+            color: var(--sm-teal);
+            display: block;
+            text-align: right;
+            padding-right: 0.5rem;
+        }
+
+        /* --- PDF Specific Styles --- */
+        .no-print { display: none !important; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .dashboard { grid-template-columns: 1fr 1fr; }
+            header { flex-direction: column; align-items: flex-start; }
+            .controls-area { flex-wrap: wrap; margin-top: 1rem; width: 100%; }
+            #resellerName { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-to-print" id="pdf-content">
+    <header>
+        <div class="header-titles">
+            <h1><span class="brand-accent">SiteMinder</span> Reseller Opportunity</h1>
+            <p class="subtitle">Estimated monthly, annual, and lifetime revenue potential.</p>
+        </div>
+
+        <div class="controls-area">
+            <div class="input-group">
+                <label for="currencySelector">Currency</label>
+                <select id="currencySelector" class="form-control" onchange="updateCurrency()">
+                    <option value="USD">USD ($)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="AUD">AUD ($)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="resellerName">Reseller Name</label>
+                <input type="text" id="resellerName" class="form-control" placeholder="Enter Name...">
+            </div>
+
+            <div class="input-group" style="justify-content: flex-end;">
+                 <label>&nbsp;</label> <button class="btn-export" id="exportBtn" onclick="exportToPDF()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
