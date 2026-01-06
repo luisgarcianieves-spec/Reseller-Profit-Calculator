@@ -7,50 +7,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <style>
-        /* --- SiteMinder Brand Colors & Theme --- */
+        /* --- SiteMinder Brand Colors --- */
         :root {
-            --sm-teal: #00a4b4;       /* Primary actionable color */
-            --sm-dark-blue: #1e2e48;  /* Headings, strong text */
-            --sm-text: #2d3e50;       /* Body text */
-            --sm-bg: #f4f6f7;         /* Page background */
+            --sm-teal: #00a4b4;
+            --sm-dark-blue: #1e2e48;
+            --sm-text: #2d3e50;
+            --sm-bg: #f4f6f7;
             --sm-card-bg: #ffffff;
             --sm-border: #e6e9eb;
-            --success-green: #28a745; /* Kept distinct for financial gain */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--sm-bg);
             color: var(--sm-text);
-            padding: 2rem;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            padding: 1.5rem; 
+            line-height: 1.4; 
         }
 
-        /* The main container that will be printed to PDF */
         .container-to-print {
-            max-width: 1000px;
+            max-width: 900px;
             margin: 0 auto;
-            background-color: var(--sm-bg); /* Ensure background stays in PDF */
-            padding: 1rem;
+            background-color: var(--sm-bg);
+            padding: 0.5rem;
         }
 
-        /* --- Header & Controls --- */
+        /* --- Header --- */
         header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1.5rem;
             border-bottom: 2px solid var(--sm-border);
-            padding-bottom: 1.5rem;
+            padding-bottom: 1rem;
         }
 
         .header-titles h1 {
-            margin: 0 0 0.5rem 0;
+            margin: 0 0 0.25rem 0;
             color: var(--sm-dark-blue);
             font-weight: 700;
+            font-size: 1.8rem;
         }
         
         .brand-accent { color: var(--sm-teal); }
@@ -58,461 +54,68 @@
         .header-titles p.subtitle { 
             margin: 0; 
             color: #64748b; 
+            font-size: 0.9rem;
         }
 
+        /* --- Controls Area --- */
         .controls-area {
             display: flex;
-            flex-direction: column;
             gap: 1rem;
             align-items: flex-end;
         }
 
-        .reseller-input-group {
+        .input-group {
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .input-group label { 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            color: var(--sm-dark-blue); 
         }
         
-        .reseller-input-group label { font-size: 0.85rem; font-weight: 600; color: var(--sm-dark-blue); }
-        
-        #resellerName {
-            padding: 0.5rem 0.75rem;
+        /* Inputs & Selects */
+        .form-control {
+            padding: 0.4rem 0.6rem;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
-            width: 250px;
-            text-align: right;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--sm-dark-blue);
+            background-color: #fff;
         }
+
+        #resellerName { width: 180px; }
+        #currencySelector { width: 80px; cursor: pointer; }
 
         .btn-export {
             background-color: var(--sm-teal);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            height: 34px; /* Align with inputs */
         }
 
         .btn-export:hover { background-color: #008c99; }
 
-        /* --- Dashboard Cards --- */
+        /* --- Dashboard Grid --- */
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .card {
             background: var(--sm-card-bg);
-            padding: 1.5rem;
-            border-radius: 8px;
-            /* Subtle shadow for screen, removed for print later */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-            text-align: center;
-            border: 1px solid var(--sm-border);
-            border-top: 4px solid var(--sm-dark-blue);
-        }
-
-        .card.profit { 
-            border-top-color: var(--sm-teal); 
-            background: linear-gradient(to bottom right, #ffffff, #f0fbff);
-        }
-
-        .card h3 {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin: 0 0 0.5rem 0;
-        }
-
-        .card .value {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--sm-dark-blue);
-            line-height: 1.2;
-        }
-        
-        .card.profit .value { color: var(--sm-teal); }
-
-        .card .sub-value {
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        /* --- Input Table Section --- */
-        .input-section {
-            background: var(--sm-card-bg);
-            padding: 2rem;
+            padding: 1rem;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid var(--sm-border);
-        }
-
-        .input-section h2 {
-            color: var(--sm-dark-blue);
-            margin-top: 0;
-        }
-
-        table { width: 100%; border-collapse: separate; border-spacing: 0; }
-
-        th {
-            text-align: left;
-            padding: 1rem;
-            color: var(--sm-dark-blue);
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-bottom: 2px solid var(--sm-border);
-            background-color: #fcfdfd;
-        }
-
-        td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-bottom: 1px solid var(--sm-border);
-        }
-
-        tr:last-child td { border-bottom: none; }
-
-        /* Input Styling */
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        /* Currency prefix */
-        .currency-symbol {
-            position: absolute;
-            left: 8px;
-            color: #94a3b8;
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        input[type="number"] {
-            width: 80px;
-            padding: 0.5rem 0.5rem 0.5rem 1.25rem; /* padding left for currency symbol */
-            border: 1px solid var(--sm-border);
-            border-radius: 4px;
-            font-size: 1rem;
-            color: var(--sm-dark-blue);
-            background: #f8fafc;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        
-        input.qty { padding-left: 0.5rem; } /* No currency symbol needed for qty */
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--sm-teal);
-            background: #fff;
-        }
-
-        .tier-name { font-weight: 600; color: var(--sm-dark-blue); }
-        
-        .markup-display {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--sm-teal);
-            display: block;
-            text-align: right;
-            padding-right: 1rem;
-        }
-
-        /* --- PDF Specific Styles --- */
-        /* These styles apply when the PDF is being generated to ensure a clean look */
-        .html2pdf__container {
-            /* Remove shadows for cleaner print */
-            box-shadow: none !important; 
-        }
-        
-        /* Hide elements that shouldn't be in the PDF */
-        .no-print {
-            display: none !important;
-        }
-
-        /* Responsive adjustments for smaller screens (not relevant for PDF export) */
-        @media (max-width: 768px) {
-            header { flex-direction: column; align-items: stretch; }
-            .controls-area, .reseller-input-group { align-items: flex-start; width: 100%; }
-            #resellerName { width: 100%; text-align: left;}
-            .dashboard { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 600px) {
-            .dashboard { grid-template-columns: 1fr; }
-            /* Simple table responsiveness */
-            th:nth-child(3), td:nth-child(3),
-            th:nth-child(4), td:nth-child(4) { display: none; } /* Hide detailed cost/price columns on very small mobile */
-             th:nth-child(5), td:nth-child(5) { text-align: right; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="container-to-print" id="pdf-content">
-    <header>
-        <div class="header-titles">
-            <h1><span class="brand-accent">SiteMinder</span> Partner Opportunity</h1>
-            <p class="subtitle">Estimate monthly, annual, and lifetime revenue potential.</p>
-        </div>
-
-        <div class="controls-area">
-            <div class="reseller-input-group">
-                <label for="resellerName">Prepared For:</label>
-                <input type="text" id="resellerName" placeholder="Enter Reseller Name...">
-            </div>
-            <button class="btn-export" id="exportBtn" onclick="exportToPDF()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export PDF Report
-            </button>
-        </div>
-    </header>
-
-    <div class="dashboard">
-        <div class="card profit">
-            <h3>Estimated Monthly Net Profit</h3>
-            <div class="value" id="monthly-profit">$0</div>
-            <div class="sub-value">Your Margin</div>
-        </div>
-
-        <div class="card profit">
-            <h3>Estimated Annual Net Profit</h3>
-            <div class="value" id="annual-profit">$0</div>
-            <div class="sub-value">Monthly × 12</div>
-        </div>
-
-        <div class="card">
-            <h3>3-Year Opportunity (LTV)</h3>
-            <div class="value" id="ltv-profit">$0</div>
-            <div class="sub-value">Cumulative Margin</div>
-        </div>
-        
-        <div class="card">
-            <h3>Total Monthly Invoiced</h3>
-            <div class="value" id="monthly-revenue">$0</div>
-            <div class="sub-value">Gross Revenue</div>
-        </div>
-    </div>
-
-    <div class="input-section">
-        <h2>Portfolio Configuration</h2>
-        <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: #64748b;">
-            Model the portfolio based on property size and your pricing strategy.
-        </p>
-
-        <table id="calculator-table">
-            <thead>
-                <tr>
-                    <th style="width: 25%">Property Tier</th>
-                    <th style="width: 15%">Count (#)</th>
-                    <th style="width: 20%">Your Buy Rate ($)</th>
-                    <th style="width: 20%">Your Sell Rate ($)</th>
-                    <th style="width: 20%; text-align: right;">Total Monthly Margin</th>
-                </tr>
-            </thead>
-            <tbody id="calculator-body">
-                <tr>
-                    <td><span class="tier-name">Small (1-10 Rooms)</span></td>
-                    <td><input type="number" class="qty" value="0" min="0" placeholder="0"></td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="cost" value="40" min="0">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="price" value="79" min="0">
-                        </div>
-                    </td>
-                    <td><span class="markup-display">$0</span></td>
-                </tr>
-                <tr>
-                    <td><span class="tier-name">Medium (11-25 Rooms)</span></td>
-                    <td><input type="number" class="qty" value="0" min="0" placeholder="0"></td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="cost" value="70" min="0">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="price" value="119" min="0">
-                        </div>
-                    </td>
-                    <td><span class="markup-display">$0</span></td>
-                </tr>
-                <tr>
-                    <td><span class="tier-name">Large (26-50 Rooms)</span></td>
-                    <td><input type="number" class="qty" value="0" min="0" placeholder="0"></td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="cost" value="120" min="0">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="price" value="189" min="0">
-                        </div>
-                    </td>
-                    <td><span class="markup-display">$0</span></td>
-                </tr>
-                <tr>
-                    <td><span class="tier-name">Enterprise (50+ Rooms)</span></td>
-                    <td><input type="number" class="qty" value="0" min="0" placeholder="0"></td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="cost" value="200" min="0">
-                        </div>
-                    </td>
-                    <td>
-                        <div class="input-wrapper">
-                            <span class="currency-symbol">$</span>
-                            <input type="number" class="price" value="299" min="0">
-                        </div>
-                    </td>
-                    <td><span class="markup-display">$0</span></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<script>
-    // 1. Formatting utility
-    const formatter = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    });
-
-    // 2. Core Calculation Logic
-    function calculate() {
-        const rows = document.querySelectorAll('#calculator-body tr');
-        let totalMonthlyProfit = 0;
-        let totalMonthlyRevenue = 0;
-
-        rows.forEach(row => {
-            // Get inputs (handle empty strings as 0)
-            const qty = row.querySelector('.qty').value === '' ? 0 : parseFloat(row.querySelector('.qty').value);
-            const cost = row.querySelector('.cost').value === '' ? 0 : parseFloat(row.querySelector('.cost').value);
-            const price = row.querySelector('.price').value === '' ? 0 : parseFloat(row.querySelector('.price').value);
-
-            // Math
-            const revenue = qty * price;
-            const profit = qty * (price - cost);
-            const marginPerUnit = price - cost;
-
-            // Update row margin display
-            const marginDisplay = row.querySelector('.markup-display');
-            // Only show if quantity is > 0
-            if(qty > 0) {
-                 marginDisplay.textContent = marginPerUnit >= 0 ? `+${formatter.format(profit)}` : formatter.format(profit);
-                 marginDisplay.style.color = (price - cost) < 0 ? '#dc2626' : 'var(--sm-teal)';
-            } else {
-                 marginDisplay.textContent = "$0";
-                 marginDisplay.style.color = '#94a3b8';
-            }
-
-            // Add to totals
-            totalMonthlyRevenue += revenue;
-            totalMonthlyProfit += profit;
-        });
-
-        // Update Dashboard Top Level
-        document.getElementById('monthly-revenue').textContent = formatter.format(totalMonthlyRevenue);
-        document.getElementById('monthly-profit').textContent = formatter.format(totalMonthlyProfit);
-        document.getElementById('annual-profit').textContent = formatter.format(totalMonthlyProfit * 12);
-        document.getElementById('ltv-profit').textContent = formatter.format(totalMonthlyProfit * 36);
-    }
-
-    // Attach Event Listeners to all inputs for real-time calculation
-    const inputs = document.querySelectorAll('#calculator-body input');
-    inputs.forEach(input => {
-        input.addEventListener('input', calculate);
-        // Also calculate on blur to handle empty states better
-        input.addEventListener('blur', calculate);
-    });
-
-    // Run once on load to initialize zero values
-    calculate();
-
-
-    // 3. PDF Export Logic
-    function exportToPDF() {
-        // Get the element that contains everything we want in the PDF
-        const element = document.getElementById('pdf-content');
-        
-        // Get the export button so we can hide it during the process
-        const exportBtn = document.getElementById('exportBtn');
-        
-        // Get Reseller Name for filename
-        let resellerName = document.getElementById('resellerName').value;
-        if (!resellerName) resellerName = "Partner";
-        // Clean the name for a filename (remove special chars)
-        const safeName = resellerName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        const filename = `SiteMinder_Opportunity_${safeName}.pdf`;
-
-        // PDF Generation Options
-        // We use a slightly higher scale for sharper text in the PDF
-        const opt = {
-          margin:       [0.4, 0.4], /* top/bottom, left/right inches */
-          filename:     filename,
-          image:        { type: 'jpeg', quality: 0.98 },
-          html2canvas:  { scale: 2, useCORS: true, logging: false }, 
-          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-
-        // --- Pre-export adjustments ---
-        // 1. Hide the export button
-        exportBtn.classList.add('no-print');
-        // 2. Change input styling so they look like flat text in PDF, not boxes
-        document.querySelectorAll('input').forEach(input => {
-             input.style.border = 'none';
-             input.style.background = 'transparent';
-             input.style.paddingLeft = '0';
-        });
-         document.querySelectorAll('.currency-symbol').forEach(sym => {
-             sym.style.position = 'static';
-             sym.style.color = 'var(--sm-dark-blue)';
-        });
-
-
-        // --- Generate and Save ---
-        html2pdf().set(opt).from(element).save().then(function(){
-            // --- Post-export cleanup (Restore UI) ---
-            exportBtn.classList.remove('no-print');
-             //tg Restore input styling
-            document.querySelectorAll('input').forEach(input => {
-                 input.style.border = '';
-                 input.style.background = '';
-                 input.style.paddingLeft = '';
-                 // trigger calculation to reset focus states if needed
-                 calculate(); 
-            });
-              document.querySelectorAll('.currency-symbol').forEach(sym => {
-                 sym.style.position = '';
-                 sym.style.color = '';
-            });
-        });
-    }
-</script>
-
-</body>
-</html>
